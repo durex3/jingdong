@@ -75,8 +75,8 @@ export default {
 .search {
     margin-bottom: 0.12rem;
     line-height: 0.32rem;
-    background: #f5f5f5;
-    color: #b7b7b7;
+    background: $search-background;
+    color: $search-font-color;
     border-radius: 0.16rem;
     .iconfont {
         position: relative;

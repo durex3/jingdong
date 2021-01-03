@@ -1,50 +1,44 @@
 <template>
     <div class="nearby">
         <h3 class="nearby__title">附近店铺</h3>
-        <div
-            class="nearby__item"
+        <router-link
+            :to="`/shop/${item._id}`"
             v-for="item in nearbys"
-            :key="item.id"
+            :key="item._id"
         >
-            <img
-                class="nearby__item__img"
-                :src="item.img"
-            />
-            <div class="nearby__content">
-                <div class="nearby__content__title">{{item.title}}</div>
-                <div class="nearby__content__tags">
-                    <span
-                        v-for="(tag, innerIndex) in item.tags"
-                        :key="innerIndex"
-                        class="nearby__content__tag"
-                    >{{tag}}</span>
-                </div>
-                <p class="nearby__content__highlight">{{item.desc}}</p>
-            </div>
-        </div>
+            <ShopInfo :item="item"></ShopInfo>
+        </router-link>
+
     </div>
 </template>
 
 <script>
+import { ref } from 'vue'
+import { get } from '../../utils/request'
+import ShopInfo from '../../components/ShopInfo'
+
+const useNearbysEffect = () => {
+    const nearbys = ref([])
+    const getnearbys = async () => {
+        const result = await get('/api/shop/hot-list')
+        if (result?.errno === 0 && result?.data?.length) {
+            nearbys.value = result.data
+        }
+    }
+    return {
+        nearbys,
+        getnearbys
+    }
+}
+
 export default {
     name: 'Nearby',
+    components: {
+        ShopInfo
+    },
     setup() {
-        const nearbys = [
-            {
-                id: 1,
-                img: 'http://www.dell-lee.com/imgs/vue3/near.png',
-                title: '沃尔玛',
-                tags: ['月售1万+', '起送￥0', '基础运费￥5'],
-                desc: 'vip尊享'
-            },
-             {
-                id: 2,
-                img: 'http://www.dell-lee.com/imgs/vue3/near.png',
-                title: '沃尔玛',
-                tags: ['月售1万+', '起送￥0', '基础运费￥5'],
-                desc: 'vip尊享'
-            }
-        ]
+        const { nearbys, getnearbys } = useNearbysEffect()
+        getnearbys()
         return {
             nearbys
         }
@@ -53,7 +47,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/viriables.scss";
+@import '../../style/viriables.scss';
 
 .nearby {
     &__title {
@@ -62,39 +56,8 @@ export default {
         font-weight: normal;
         color: $content-color;
     }
-    &__item {
-        display: flex;
-        padding-top: 0.12rem;
-        &__img {
-            margin-right: 0.16rem;
-            width: 0.56rem;
-            height: 0.56rem;
-        }
-    }
-    &__content {
-        flex: 1;
-        padding-bottom: 0.12rem;
-        border-bottom: 0.01rem solid $content-background;
-        &__title {
-            line-height: 0.22rem;
-            font-size: 0.16rem;
-            color: $content-color;
-        }
-        &__tags {
-            margin-top: 0.08rem;
-            line-height: 0.18rem;
-            font-size: 0.13rem;
-            color: $content-color;
-        }
-        &__tag {
-            margin-right: 0.16rem;
-        }
-        &__highlight {
-            margin: 0.08rem 0 0 0;
-            line-height: 0.18rem;
-            font-size: 0.13rem;
-            color: #e93b3b;
-        }
+    a {
+        text-decoration: none;
     }
 }
 </style>

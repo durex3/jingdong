@@ -138,10 +138,10 @@ export default {
     &__login-button {
         margin: 0.32rem 0.4rem 0.16rem 0.4rem;
         line-height: 0.48rem;
-        background: #0091ff;
+        background: $button-color;
         box-shadow: 0 0.04rem 0.08rem 0 rgba(0, 145, 255, 0.32);
         border-radius: 0.04rem;
-        color: #fff;
+        color: $background-color;
         font-size: 0.16rem;
         text-align: center;
     }
