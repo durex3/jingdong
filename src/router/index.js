@@ -7,6 +7,16 @@ const routes = [
         component: () => import('../views/home/Home')
     },
     {
+        path: '/shop/:id',
+        name: 'Shop',
+        component: () => import('../views/shop/Shop')
+    },
+    {
+        path: '/cart',
+        name: 'Cart',
+        component: () => import('../views/cart/Cart')
+    },
+    {
         path: '/login',
         name: 'Login',
         component: () => import('../views/login/Login'),
@@ -18,11 +28,6 @@ const routes = [
                 next()
             }
         }
-    },
-    {
-        path: '/shop/:id',
-        name: 'Shop',
-        component: () => import('../views/shop/Shop')
     },
     {
         path: '/register',

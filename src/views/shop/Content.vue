@@ -15,7 +15,7 @@
                 :key="item._id"
             >
                 <img
-                    src="http://www.dell-lee.com/imgs/vue3/near.png"
+                    :src="item.imgUrl"
                     class="product__item__img"
                 />
                 <div class="product__item__detail">
@@ -27,19 +27,29 @@
                     </p>
                 </div>
                 <div class="product__number">
-                    <span class="product__number__minus">-</span>
-                    88
-                    <span class="product__number__add">+</span>
+                    <span
+                        class="product__number__minus"
+                        @click="() => changeCartItem(shopId, shopName, item, -1)"
+                    >-</span>
+                    {{getProductCount(shopId, item._id)}}
+                    <span
+                        class="product__number__add"
+                        @click="() => changeCartItem(shopId, shopName, item, 1)"
+                    >+</span>
                 </div>
             </div>
         </div>
     </div>
+    <Cart></Cart>
 </template>
 
 <script>
 import { ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 import { get } from '../../utils/request'
+import Cart from './Cart'
+import { useCommonCartEffect } from './common-cart-effect'
 
 const useCategoriesEffect = () => {
     const categories = [
@@ -61,10 +71,8 @@ const useCategoriesEffect = () => {
     }
 }
 
-const useContentsEffect = (currentTab) => {
+const useContentsEffect = (shopId, currentTab) => {
     const contents = ref([])
-    const route = useRoute()
-    const shopId = route.params.id
     const getContentData = async () => {
         const result = await get(`/api/shop/${shopId}/products`, {
             tab: currentTab.value
@@ -92,15 +100,49 @@ const useTabEffect = () => {
     }
 }
 
+const useChangeCartEffect = () => {
+    const store = useStore()
+    const changeShopName = (shopId, shopName) => {
+        store.commit('changeShopName', {
+            shopId,
+            shopName
+        })
+    }
+    const { carts, changeCartItemInfo } = useCommonCartEffect()
+    const changeCartItem = (shopId, shopName, item, count) => {
+        changeShopName(shopId, shopName)
+        changeCartItemInfo(shopId, item, count)
+    }
+    const getProductCount = (shopId, productId) => {
+        return carts?.[shopId]?.products?.[productId]?.count || 0
+    }
+    return {
+        carts,
+        changeCartItem,
+        getProductCount
+    }
+}
+
 export default {
     name: 'Content',
+    props: ['shopName'],
+    components: {
+        Cart
+    },
     setup() {
+        const route = useRoute()
+        const shopId = route.params.id
         const { categories } = useCategoriesEffect()
         const { currentTab, handleTabClick } = useTabEffect()
-        const { contents } = useContentsEffect(currentTab)
+        const { contents } = useContentsEffect(shopId, currentTab)
+        const { carts, changeCartItem, getProductCount } = useChangeCartEffect()
         return {
             categories,
             contents,
+            shopId,
+            carts,
+            changeCartItem,
+            getProductCount,
             currentTab,
             handleTabClick
         }

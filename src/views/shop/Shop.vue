@@ -18,7 +18,7 @@
             :hideBorder="true"
             v-show="item.imgUrl"
         ></ShopInfo>
-        <Content></Content>
+        <Content :shopName="item.name"></Content>
     </div>
 </template>
 
